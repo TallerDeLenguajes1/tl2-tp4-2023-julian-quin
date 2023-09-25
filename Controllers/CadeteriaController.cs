@@ -9,76 +9,75 @@ namespace tl2_tp4_2023_julian_quin.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CadetriaController : ControllerBase
+public class CadeteriaController : ControllerBase
 {
-    private readonly ILogger<CadetriaController> _logger;
+    private readonly ILogger<CadeteriaController> _logger;
     private Cadeteria cadeteria;
 
-    public CadetriaController(ILogger<CadetriaController> logger)
+    public CadeteriaController(ILogger<CadeteriaController> logger)
     {
         _logger = logger;
         cadeteria = Cadeteria.GetCadeteria();
     }
 
-    [HttpGet("Acceso")]
-    public ActionResult AccesoCadeteria (string consumo)
-    {
-        if (cadeteria.IniciarServicioCadeteria(consumo)) return Ok("Cadeteria Cargada");
-        return BadRequest("Solicitud incorrecta");
-
-    }
-    [HttpGet("Cadetes")]
+   
+    [HttpGet("Ver_Cadetes")]
     public ActionResult<IEnumerable<Cadete>> GetCadetes()
     {
         return Ok(cadeteria.ListaCadete);
         
     }
-    [HttpGet("Pedidos")]
+    [HttpGet("Ver_Pedidos")]
     public ActionResult<IEnumerable<Cadete>> GetPedidos()
     {
         return Ok(cadeteria.ListaPedidos);
         
     }
-    [HttpPost("Añadir_Pedidos")]
+    [HttpPost("Add_Pedidos")]
     public ActionResult<Pedido> AgregarPedido(Pedido pedido)
     {
-        if (cadeteria.CrearPedido(pedido.Numero,pedido.Observacion,pedido.Estado,pedido.Cliente.Nombre,pedido.Cliente.Direccion,pedido.Cliente.Telefono,pedido.Cliente.DatosReferenciaDireccion))
-        {
-             
-        } else return BadRequest("Error en la peticion");
         
-        return Ok();
+        if (pedido != null)
+        {
+            int numPedido;
+            if(cadeteria.ListaPedidos.Count==0) numPedido = 0;
+            else {
+                numPedido = cadeteria.ListaPedidos.Max(pedido => pedido.Numero)+1;
+                pedido.Numero = numPedido;
+            }
+            if(cadeteria.CrearPedido(pedido.Numero,pedido.Observacion,pedido.Estado,pedido.Cliente.Nombre,pedido.Cliente.Direccion,pedido.Cliente.Telefono,pedido.Cliente.DatosReferenciaDireccion)) return Ok(pedido);
+            else return BadRequest("Solicitud incorrecta");
+             
+        } else return BadRequest("Solicitud incorrecta");
+        
+       
     }
     
     [HttpPut("Asignar_Pedidos")]
     public ActionResult AsignarPedido(int idPedido, int idCadete)
     {
-        if (cadeteria.AsignarCadeteAPedido(idCadete,idPedido)) return Ok();
-        return BadRequest("Error en la peticion");
+        if (cadeteria.AsignarCadeteAPedido(idCadete,idPedido)) return Ok("Pedido asignado");
+        return NotFound("Resurso no encontrado");
     }
     [HttpPut("Reasignar_Pedidos")]
     public ActionResult CambiarCadetePedido(int idPedido,int idNuevoCadete)
     {
-        cadeteria.ReasignarCadeteApedido(idNuevoCadete,idPedido);
-        return Ok();
+        if(cadeteria.ReasignarCadeteApedido(idNuevoCadete,idPedido)) return Ok("Pedido Reasignado");
+        return BadRequest("Rescurso no encontrado");
 
     }
 
-    [HttpPut("Estado_Pedido")]
-    public ActionResult CambiarEstadoPedido(int idPedido,int NuevoEstado)
+    [HttpPut("Modificar_Estado_Pedido")]
+    public ActionResult CambiarEstadoPedido(int idPedido,int nuevoEstado)
     {
-        bool estado;
-        if(NuevoEstado==1)estado=true;
-        else estado=false;
-        cadeteria.CambiarEstadoPedido(idPedido,estado);
-        return Ok();
+        if(cadeteria.CambiarEstadoPedido(idPedido,nuevoEstado) || cadeteria.CambiarEstadoPedido(idPedido,nuevoEstado)) return Ok("Nuevo Estado establecido");
+        return NotFound("Error en la solicitud: posible id o Nuevo estado incorrecto para el pedido");
+        
     }
-    [HttpGet("informe")] 
+    [HttpGet("Informe")] 
     public ActionResult GetInforme()
     {
         return Ok(cadeteria.SolicitarInforme());
     }
-
-
-    
+   
 }

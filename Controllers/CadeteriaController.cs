@@ -70,7 +70,7 @@ public class CadeteriaController : ControllerBase
     [HttpPut("Modificar_Estado_Pedido")]
     public ActionResult CambiarEstadoPedido(int idPedido,int nuevoEstado)
     {
-        if(cadeteria.CambiarEstadoPedido(idPedido,nuevoEstado) || cadeteria.CambiarEstadoPedido(idPedido,nuevoEstado)) return Ok("Nuevo Estado establecido");
+        if(cadeteria.CambiarEstadoPedido(idPedido,nuevoEstado)) return Ok("Nuevo Estado establecido");
         return NotFound("Error en la solicitud: posible id o Nuevo estado incorrecto para el pedido");
         
     }

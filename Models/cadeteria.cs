@@ -28,28 +28,33 @@ namespace EspacioCadeteria
         {
             if (CadeteriaSingleton == null)
             {
-                CadeteriaSingleton = new Cadeteria(); //patron singleton
+                IniciarServicioCadeteria("json"); //patron singleton
             }
             return CadeteriaSingleton;
         }
         public Cadeteria() { }
 
 
-        public bool IniciarServicioCadeteria(string consumo)
+        public static bool IniciarServicioCadeteria(string consumo)
         {
             AccesoADatos Acceso;
-            string pathCadetes, pathCadeteria;
-            if (consumo.ToLower() == "json")
+            string pathCadetes = "", pathCadeteria = "";
+            switch (consumo.ToLower())
             {
-                Acceso = new AccesoADatos_Json();
-                pathCadeteria = "DatosCadeteria.json";
-                pathCadetes = "DatosCadetes.json";
-            }
-            else{
-            
-                Acceso = new AccesoADatos_Csv();
-                pathCadeteria = "DatosCadeteria.csv";
-                pathCadetes = "DatosCadetes.csv";
+                case "json":
+                    Acceso = new AccesoADatos_Json();
+                    pathCadeteria = "DatosCadeteria.json";
+                    pathCadetes = "DatosCadetes.json";
+                    break;
+                case "csv":
+                    Acceso = new AccesoADatos_Csv();
+                    pathCadeteria = "DatosCadeteria.csv";
+                    pathCadetes = "DatosCadetes.csv";
+                    break;
+                default:
+                    CadeteriaSingleton = new Cadeteria();
+                    Acceso = new AccesoADatos_Json();
+                    break;
             }
             if (Acceso.PathExist(pathCadeteria) && Acceso.PathExist(pathCadetes))
             {
@@ -82,20 +87,12 @@ namespace EspacioCadeteria
                 if (PedidoEncontado.Estado == EstadosPedido.Pendiente)
                 {
                     PedidoEncontado.AsignarCadete(CadeteEncontrado);
-                    PedidoEncontado.PedidoAsignado();// cambio el estado del pedido a "asignado"
+                    PedidoEncontado.PedidoAsignado(); // cambio el estado del pedido a "asignado"
                 }
                 else return false;
                 return true;
             }
             return false;
-        }
-        private void EliminarPedido(int numeroP) // no es necesario, pero lo dejo!
-        {
-            var PedidoEncontrado = EncontrarPedido(numeroP);
-            if (PedidoEncontrado != null)
-            {
-                ListaPedidos.Remove(PedidoEncontrado);
-            }
         }
         public bool ReasignarCadeteApedido(int idCadete, int numeroP)
         {
@@ -103,33 +100,35 @@ namespace EspacioCadeteria
             var PedidoEncontado = EncontrarPedido(numeroP);
             if (CadeteEncontrado != null && PedidoEncontado != null)
             {
-                if (PedidoEncontado.Estado != EstadosPedido.Entregado && PedidoEncontado.Estado != EstadosPedido.cancelado) PedidoEncontado.AsignarCadete(CadeteEncontrado);
-                else return false;
-                return true;
+                if (PedidoEncontado.Estado != EstadosPedido.Entregado && PedidoEncontado.Estado != EstadosPedido.cancelado){
+                    PedidoEncontado.AsignarCadete(CadeteEncontrado);
+                    return true;
+                } else return false;
+                
             }
             return false;
         }
-        public int CambiarEstadoPedido(int numeroP, bool opcion)
+        public bool CambiarEstadoPedido(int numeroP, int nuevoEstado)
         {
-            int warning = 2;
+            bool flag = false; // false = cambioFallido , true = cambioRealizado
             var PedidoEncontrado = EncontrarPedido(numeroP);
             if (PedidoEncontrado != null)
             {
-                if (PedidoEncontrado.Estado == EstadosPedido.Asignado && opcion == true) //con true se avisa que se entregó
+                if (PedidoEncontrado.Estado == EstadosPedido.Asignado && nuevoEstado == 1) //con 1 se avisa que se entregó
                 {
                     PedidoEncontrado.PedidoEntregado();
-                    warning = 1; // aviso que se cambio exitosamente
+                    flag = true;                            
                 }
-                else warning = 0; // para indicar que el pedido no está asignado
-
-                if (opcion == false)
-                { // no discrimino si está asignado para cancelar (false == cancelar)
-                    PedidoEncontrado.PedidoCancelado();
-                    warning = 1; // aviso que se cambio exitosamente
+                else
+                {
+                    if (PedidoEncontrado.Estado != EstadosPedido.Entregado && nuevoEstado == 0) //con 0 indico que se canceló
+                    {
+                        PedidoEncontrado.PedidoCancelado();
+                        flag = true;
+                    }
                 }
-                return warning;
             }
-            return warning; // para indicar que el numero de pedido es incorrecto (por defecto 2)
+            return flag;
         }
         public double JornalACobrar(int idCadete)
         {
@@ -177,7 +176,7 @@ namespace EspacioCadeteria
             int CantidadCadetes = ListaCadete.Count();
             int TotalPedidosEntregados = ListaPedidos.Count(pedido => pedido.Estado == EstadosPedido.Entregado);
             double EnviosPromediosCadetes = TotalPedidosEntregados / (double)CantidadCadetes;
-            List<string> LaburoDiaCadetesInfo = new();
+            List<Inf_Personal_cad> InformacionCadete = new();
             var DiaEmpleados = ListaCadete.Select(cadete => new
             {
                 NombreCadete = cadete.Nombre,
@@ -186,16 +185,29 @@ namespace EspacioCadeteria
             });
             foreach (var DiaCadete in DiaEmpleados)
             {
-                var infoCadete = "Cadete: " + DiaCadete.NombreCadete + " " + ", Cobro: $" + DiaCadete.TotalCadete + " P.Entregados: " + DiaCadete.PedidosEntregados;
-                LaburoDiaCadetesInfo.Add(infoCadete);
-            }
-            //List<string> LaburoDeLDiaCadetes = ListaCadete.Select(cadete => $"{cadete.Nombre}, Total a Cobrar: {JornalACobrar(cadete.Id)}, Pedidos Entregados: {ListaPedidos.Count(pedido => pedido.Cadete.Id == cadete.Id && pedido.Estado == EstadosPedido.Entregado)}").ToList();
+                var infcadete = new Inf_Personal_cad();
+                infcadete.NombreCadete = DiaCadete.NombreCadete;
+                infcadete.PedidosEntregados = DiaCadete.PedidosEntregados;
+                infcadete.TotalCadete = DiaCadete.TotalCadete;
 
-            return new Informe(TotalPedidosEntregados, EnviosPromediosCadetes, LaburoDiaCadetesInfo);
+                InformacionCadete.Add(infcadete);
+            }
+
+            return new Informe(TotalPedidosEntregados, EnviosPromediosCadetes, InformacionCadete);
 
         }
 
 
     }
+    public class Inf_Personal_cad
+    {
+        private string nombreCadete;
+        private double totalCadete;
+        private int pedidosEntregados;
 
+        public string NombreCadete { get => nombreCadete; set => nombreCadete = value; }
+
+        public int PedidosEntregados { get => pedidosEntregados; set => pedidosEntregados = value; }
+        public double TotalCadete { get => totalCadete; set => totalCadete = value; }
+    }
 }

@@ -4,10 +4,10 @@ namespace EspacioPedido
 {
     public enum EstadosPedido
     {
-        Entregado,
-        Asignado,
-        Pendiente,
-        cancelado,    
+        Pendiente, //0
+        Asignado,  //1
+        Entregado, //2
+        cancelado, //3   
     }
     public class Pedido
     {

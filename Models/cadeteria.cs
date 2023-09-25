@@ -1,7 +1,8 @@
 using EspacioCadete;
 using EspacioInforme;
 using EspacioPedido;
-using EspacioAcceso;
+//using EspacioAcceso;
+using EspacioAccesoADatosPedidos;
 namespace EspacioCadeteria
 {
     public class Cadeteria
@@ -10,61 +11,66 @@ namespace EspacioCadeteria
         const int Entregado = 500;
         private string nombre;
         private string telefonoCadeteria;
-        private List<Cadete> listaCadete;
-        private List<Pedido> listaPedidos;
+        private List<Cadete> listaCadete; // agregacion
+        private List<Pedido> listaPedidos; //composicion ?
+        private AccesoADatosPedidos accessDataPedidos;
+        
 
         public string Nombre { get => nombre; set => nombre = value; }
         public string TelefonoCadeteria { get => telefonoCadeteria; set => telefonoCadeteria = value; }
         public List<Cadete> ListaCadete { get => listaCadete; set => listaCadete = value; }
         public List<Pedido> ListaPedidos { get => listaPedidos; set => listaPedidos = value; }
-        public Cadeteria(string NombreCadeteria, string telCadeteria, List<Cadete> cadetesLista)
+        public AccesoADatosPedidos AccessDataPedidos { get => accessDataPedidos; set => accessDataPedidos = value; }
+
+        public Cadeteria(string NombreCadeteria, string telCadeteria, List<Cadete> cadetesLista, AccesoADatosPedidos accessDataPedidos)
         {
             ListaCadete = cadetesLista;
             Nombre = NombreCadeteria;
             telefonoCadeteria = telCadeteria;
             listaPedidos = new List<Pedido>(); //error sino instancio!!
+            this.AccessDataPedidos = accessDataPedidos;
         }
-        public static Cadeteria GetCadeteria() //metodo estatico
+        public static Cadeteria GetCadeteria(string NombreCadeteria, string telCadeteria, List<Cadete> cadetesLista, AccesoADatosPedidos accessDataPedidos) //metodo estatico
         {
             if (CadeteriaSingleton == null)
             {
-                IniciarServicioCadeteria("json"); //patron singleton
+                CadeteriaSingleton= new(NombreCadeteria,telCadeteria,cadetesLista,accessDataPedidos); //patron singleton
             }
             return CadeteriaSingleton;
         }
         public Cadeteria() { }
 
 
-        public static bool IniciarServicioCadeteria(string consumo)
-        {
-            AccesoADatos Acceso;
-            string pathCadetes = "", pathCadeteria = "";
-            switch (consumo.ToLower())
-            {
-                case "json":
-                    Acceso = new AccesoADatos_Json();
-                    pathCadeteria = "DatosCadeteria.json";
-                    pathCadetes = "DatosCadetes.json";
-                    break;
-                case "csv":
-                    Acceso = new AccesoADatos_Csv();
-                    pathCadeteria = "DatosCadeteria.csv";
-                    pathCadetes = "DatosCadetes.csv";
-                    break;
-                default:
-                    CadeteriaSingleton = new Cadeteria();
-                    Acceso = new AccesoADatos_Json();
-                    break;
-            }
-            if (Acceso.PathExist(pathCadeteria) && Acceso.PathExist(pathCadetes))
-            {
-                CadeteriaSingleton = new Cadeteria(Acceso.InfoCadeteria(pathCadeteria).Nombre, Acceso.InfoCadeteria(pathCadeteria).TelefonoCadeteria, Acceso.ObtenerCadetes(pathCadetes));
-                return true;
-            }
-            return false;
+        // public static bool IniciarServicioCadeteria(string consumo)
+        // {
+        //     AccesoADatos Acceso;
+        //     string pathCadetes = "", pathCadeteria = "";
+        //     switch (consumo.ToLower())
+        //     {
+        //         case "json":
+        //             Acceso = new AccesoADatos_Json();
+        //             pathCadeteria = "DatosCadeteria.json";
+        //             pathCadetes = "DatosCadetes.json";
+        //             break;
+        //         case "csv":
+        //             Acceso = new AccesoADatos_Csv();
+        //             pathCadeteria = "DatosCadeteria.csv";
+        //             pathCadetes = "DatosCadetes.csv";
+        //             break;
+        //         default:
+        //             CadeteriaSingleton = new Cadeteria();
+        //             Acceso = new AccesoADatos_Json();
+        //             break;
+        //     }
+        //     if (Acceso.PathExist(pathCadeteria) && Acceso.PathExist(pathCadetes))
+        //     {
+        //         CadeteriaSingleton = new Cadeteria(Acceso.InfoCadeteria(pathCadeteria).Nombre, Acceso.InfoCadeteria(pathCadeteria).TelefonoCadeteria, Acceso.ObtenerCadetes(pathCadetes));
+        //         return true;
+        //     }
+        //     return false;
 
 
-        }
+        // }
 
         public bool CrearPedido(int numeroP, string observacionP, EstadosPedido estadoP, string nombreC, string direccionC, string telC, string refDireccionC)
         {
@@ -72,6 +78,7 @@ namespace EspacioCadeteria
             if (nuevoPedido != null)
             {
                 ListaPedidos.Add(nuevoPedido);
+                accessDataPedidos.Guardar(ListaPedidos);
                 return true;
             }
 
@@ -88,6 +95,7 @@ namespace EspacioCadeteria
                 {
                     PedidoEncontado.AsignarCadete(CadeteEncontrado);
                     PedidoEncontado.PedidoAsignado(); // cambio el estado del pedido a "asignado"
+                    accessDataPedidos.Guardar(ListaPedidos);
                 }
                 else return false;
                 return true;
@@ -102,6 +110,7 @@ namespace EspacioCadeteria
             {
                 if (PedidoEncontado.Estado != EstadosPedido.Entregado && PedidoEncontado.Estado != EstadosPedido.cancelado){
                     PedidoEncontado.AsignarCadete(CadeteEncontrado);
+                    accessDataPedidos.Guardar(ListaPedidos);
                     return true;
                 } else return false;
                 
@@ -117,6 +126,7 @@ namespace EspacioCadeteria
                 if (PedidoEncontrado.Estado == EstadosPedido.Asignado && nuevoEstado == 1) //con 1 se avisa que se entregó
                 {
                     PedidoEncontrado.PedidoEntregado();
+                    accessDataPedidos.Guardar(ListaPedidos);
                     flag = true;                            
                 }
                 else

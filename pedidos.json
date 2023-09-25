@@ -1,0 +1,19 @@
+[
+    {
+        "Numero": 0,
+        "Observacion": "ninguna",
+        "Cadete": {
+            "Id": 4,
+            "Nombre": "Franck",
+            "Direccion": "Tomas guido 1000",
+            "Telefono": "381251625"
+        },
+        "Estado": 2,
+        "Cliente": {
+            "Nombre": "Juan Pedro Pascal",
+            "Direccion": "Av. Ejercito del norte, 1415",
+            "Telefono": "391873273",
+            "DatosReferenciaDireccion": "Entre lavalle y tomas guido"
+        }
+    }
+]

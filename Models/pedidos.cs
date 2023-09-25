@@ -13,8 +13,8 @@ namespace EspacioPedido
     {
         private int numero;
         private string observacion;
-        private Cliente cliente; //composicion 
-        private Cadete cadete;
+        private Cliente cliente; //composicion por el enunciado
+        private Cadete cadete;  //asociacion creo!
         private EstadosPedido estado;
         
         

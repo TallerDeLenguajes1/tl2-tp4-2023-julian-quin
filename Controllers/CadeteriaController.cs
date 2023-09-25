@@ -1,6 +1,9 @@
 using System.Data.SqlTypes;
+using EspacioAccesoADatosPedidos;
 using EspacioCadete;
 using EspacioCadeteria;
+using EspacioDatosCadeteria;
+using EspacioDatosCadetes;
 using EspacioPedido;
 using Microsoft.AspNetCore.Mvc;
 //using EspacioCadeteria;
@@ -13,11 +16,18 @@ public class CadeteriaController : ControllerBase
 {
     private readonly ILogger<CadeteriaController> _logger;
     private Cadeteria cadeteria;
+    private AccesoADatosPedidos accesoPedido;
+    private AccesoADatosCadeteria accesoDatosCadeteria;
+    private AccesoADatosCadetes accesoDatosCadetes;
+
 
     public CadeteriaController(ILogger<CadeteriaController> logger)
     {
         _logger = logger;
-        cadeteria = Cadeteria.GetCadeteria();
+        accesoDatosCadeteria = new ();
+        accesoDatosCadetes = new();
+        accesoPedido = new();
+        cadeteria = Cadeteria.GetCadeteria(accesoDatosCadeteria.Obtener().Nombre,accesoDatosCadeteria.Obtener().TelefonoCadeteria,accesoDatosCadetes.Obtener(),accesoPedido);
     }
 
    

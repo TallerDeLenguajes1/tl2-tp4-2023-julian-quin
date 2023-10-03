@@ -156,6 +156,17 @@ public class Cadeteria
         return null;
 
     }
+
+    public void AgregarCadetes(int idCadete,string nombreCadete, string direccionCadete, string telCadete)
+    {
+        var nuevoCadete = new Cadete(idCadete,nombreCadete,direccionCadete,telCadete);
+        listaCadete.Add(nuevoCadete);
+    }
+
+
+
+
+
     public Informe SolicitarInforme()
     {
         int CantidadCadetes = listaCadete.Count();

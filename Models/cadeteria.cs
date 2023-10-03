@@ -131,7 +131,7 @@ public class Cadeteria
 
     }
 
-    private Cadete EncontrarCadetePorId(int idCadete)
+    public Cadete EncontrarCadetePorId(int idCadete)
     {
         foreach (var cadete in listaCadete)
         {
@@ -143,7 +143,7 @@ public class Cadeteria
         return null;
 
     }
-    private Pedido EncontrarPedido(int numeroP)
+    public Pedido EncontrarPedido(int numeroP)
     {
         foreach (var pedido in listaPedidos)
         {

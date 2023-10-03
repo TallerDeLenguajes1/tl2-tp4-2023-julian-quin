@@ -1,7 +1,7 @@
 namespace tl2_tp4_2023_julian_quin;
 public class Informe
 {
-    public int totalEnviosCadetes;
+    private int totalEnviosCadetes;
     private double promedioEnviosCdts;
     private List<InformacionDiaCadete> infoCadetes;
 

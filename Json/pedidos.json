@@ -10,10 +10,44 @@
         },
         "Estado": 2,
         "Cliente": {
-            "Nombre": "Juan Pedro Pascal",
+            "Nombre": "Juan Pascal",
             "Direccion": "Av. Ejercito del norte, 1415",
             "Telefono": "391873273",
             "DatosReferenciaDireccion": "Entre lavalle y tomas guido"
+        }
+    },
+    {
+        "Numero": 3,
+        "Observacion": "Ninguna",
+        "Cadete": {
+            "Id": 3,
+            "Nombre": "Francis",
+            "Direccion": "Tomas guido 1200",
+            "Telefono": "381251625"
+        },
+        "Estado": 2,
+        "Cliente": {
+            "Nombre": "Noemi alderete",
+            "Direccion": "Av. Jujuy 2400",
+            "Telefono": "381652635",
+            "DatosReferenciaDireccion": "no brind\u00F3"
+        }
+    },
+    {
+        "Numero": 4,
+        "Observacion": "Ninguna",
+        "Cadete": {
+            "Id": 3,
+            "Nombre": "Francis",
+            "Direccion": "Tomas guido 1200",
+            "Telefono": "381251625"
+        },
+        "Estado": 0,
+        "Cliente": {
+            "Nombre": "pamela juarez",
+            "Direccion": "san lorenzo 465",
+            "Telefono": "381652635",
+            "DatosReferenciaDireccion": "Nop"
         }
     }
 ]

@@ -31,6 +31,6 @@ C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\obj\Debug\net7.0\refint\
 C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\obj\Debug\net7.0\tl2-tp4-2023-julian-quin.pdb
 C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\obj\Debug\net7.0\tl2-tp4-2023-julian-quin.genruntimeconfig.cache
 C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\obj\Debug\net7.0\ref\tl2-tp4-2023-julian-quin.dll
-C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\bin\Debug\net7.0\DatosCadeteria.json
-C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\bin\Debug\net7.0\DatosCadetes.json
-C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\bin\Debug\net7.0\pedidos.json
+C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\bin\Debug\net7.0\Json\DatosCadeteria.json
+C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\bin\Debug\net7.0\Json\DatosCadetes.json
+C:\Users\julio\Desktop\taller2\tl2-tp4-2023-julian-quin\bin\Debug\net7.0\Json\pedidos.json

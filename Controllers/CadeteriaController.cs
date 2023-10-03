@@ -29,8 +29,37 @@ public class CadeteriaController : ControllerBase
         return Ok(cadeteria.ListaPedidos);
         
     }
+
+    [HttpGet("Ver_Pedido_Id")]
+    public ActionResult<Pedido> GetPedidoId(int id)
+    {
+        if (id>=0)
+        {
+            var pedido = cadeteria.EncontrarPedido(id);
+            if (pedido!=null)
+            {
+                return Ok(pedido);
+            }
+        }
+        return NotFound("Error en la solicitud");
+
+    }
+    [HttpGet("Ver_Cadete_Id")]
+    public ActionResult<Pedido> GetCadeteId(int id)
+    {
+        if (id>=0)
+        {
+            var cadete = cadeteria.EncontrarCadetePorId(id);
+            if (cadete!=null)
+            {
+                return Ok(cadete);
+            }
+        }
+        return NotFound("Error en la solicitud");
+
+    }
     [HttpPost("Add_Pedidos")]
-    public ActionResult<Pedido> AgregarPedido(Pedido pedido)
+    public ActionResult<Cadete> AgregarPedido(Pedido pedido)
     {
         
         if (pedido != null)

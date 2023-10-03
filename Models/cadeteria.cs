@@ -50,6 +50,7 @@ public class Cadeteria
         if (nuevoPedido != null)
         {
             listaPedidos.Add(nuevoPedido);
+            accesoPedido.Guardar(listaPedidos);
             return true;
         }
 
@@ -66,6 +67,7 @@ public class Cadeteria
             {
                 PedidoEncontado.AsignarCadete(CadeteEncontrado);
                 PedidoEncontado.PedidoAsignado(); // cambio el estado del pedido a "asignado"
+                accesoPedido.Guardar(listaPedidos);
             }
             else return false;
             return true;
@@ -81,6 +83,7 @@ public class Cadeteria
             if (PedidoEncontado.Estado != EstadosPedido.Entregado && PedidoEncontado.Estado != EstadosPedido.cancelado)
             {
                 PedidoEncontado.AsignarCadete(CadeteEncontrado);
+                accesoPedido.Guardar(listaPedidos);
                 return true;
             }
             else return false;
@@ -97,6 +100,7 @@ public class Cadeteria
             if (PedidoEncontrado.Estado == EstadosPedido.Asignado && nuevoEstado == 1) //con 1 se avisa que se entregó
             {
                 PedidoEncontrado.PedidoEntregado();
+                accesoPedido.Guardar(listaPedidos);
                 flag = true;
             }
             else
@@ -104,6 +108,7 @@ public class Cadeteria
                 if (PedidoEncontrado.Estado != EstadosPedido.Entregado && nuevoEstado == 0) //con 0 indico que se canceló
                 {
                     PedidoEncontrado.PedidoCancelado();
+                    accesoPedido.Guardar(listaPedidos);
                     flag = true;
                 }
             }

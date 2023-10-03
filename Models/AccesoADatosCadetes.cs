@@ -1,17 +1,19 @@
 using System.Text.Json;
-using EspacioCadete;
-namespace EspacioDatosCadetes
+
+namespace tl2_tp4_2023_julian_quin;
+public class AccesoADatosCadetes
 {
-    public class AccesoADatosCadetes
+    public List<Cadete> Obtener()
     {
-        public List<Cadete> Obtener()
+        const string path = "Json/DatosCadetes.json";
+        if (File.Exists(path))
         {
-            const string path="DatosCadetes.json"; 
             List<Cadete> Cadetes;
             string JsonAtexto = File.ReadAllText(path);
-            Cadetes = JsonSerializer.Deserialize<List<Cadete>>(JsonAtexto); 
-            return Cadetes; 
-            
+            Cadetes = JsonSerializer.Deserialize<List<Cadete>>(JsonAtexto);
+            return Cadetes;    
         }
+        return new List<Cadete>();
+        
     }
 }

@@ -1,24 +1,20 @@
-using EspacioCadeteria;
-
-namespace EspacioInforme
+namespace tl2_tp4_2023_julian_quin;
+public class Informe
 {
-    public class Informe
+    public int totalEnviosCadetes;
+    private double promedioEnviosCdts;
+    private List<InformacionDiaCadete> infoCadetes;
+
+    public int TotalEnviosCadetes { get => totalEnviosCadetes; }
+    public double PromedioEnviosCdts { get => promedioEnviosCdts; }
+    public List<InformacionDiaCadete> InfoCadetes { get => infoCadetes; }
+
+    public Informe(int TotalEntregados, double EnviosPromedios, List<InformacionDiaCadete> informacionCadetes)
     {
-        private int totalEnviosCadetes;
-        private double promedioEnviosCdts;
-        private List<Inf_Personal_cad> infoCadetes;
-    
-        public int TotalEnviosCadetes { get => totalEnviosCadetes; set => totalEnviosCadetes = value; }
-        public double PromedioEnviosCdts { get => promedioEnviosCdts; set => promedioEnviosCdts = value; }
-        public List<Inf_Personal_cad> InfoCadetes { get => infoCadetes; set => infoCadetes = value; }
-
-        public Informe (int TotalEntregados, double EnviosPromedios, List<Inf_Personal_cad> informacionCadetes)
-        {
-            TotalEnviosCadetes = TotalEntregados;
-            PromedioEnviosCdts=EnviosPromedios;
-            InfoCadetes = informacionCadetes;    
-        }
-
-
+        this.totalEnviosCadetes = TotalEntregados;
+        this.promedioEnviosCdts = EnviosPromedios;
+        this.infoCadetes = informacionCadetes;
     }
+
+
 }

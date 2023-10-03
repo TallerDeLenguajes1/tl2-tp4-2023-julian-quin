@@ -1,22 +1,26 @@
 using System.Text.Json;
-using EspacioPedido;
-namespace EspacioAccesoADatosPedidos
+namespace tl2_tp4_2023_julian_quin;
+public class AccesoADatosPedidos
 {
-    public class AccesoADatosPedidos
+    private const string path = "Json/pedidos.json";
+    public List<Pedido> Obtener()
     {
-        private const string path ="pedidos.json";
-        public List<Pedido> Obtener()
+        if (File.Exists(path))
         {
-            
             string JsonEnTexto = File.ReadAllText(path);
             var Listapedidos = JsonSerializer.Deserialize<List<Pedido>>(JsonEnTexto);
-
-            return Listapedidos;
+            return Listapedidos;    
         }
-        public void Guardar(List<Pedido> Pedidos)
+        return new List<Pedido>();
+       
+    }
+    public void Guardar(List<Pedido> Pedidos)
+    {
+        if (Pedidos!=null)
         {
             string JsonFormat = JsonSerializer.Serialize(Pedidos);
-            File.WriteAllText(path, JsonFormat);
+            File.WriteAllText(path, JsonFormat);    
         }
+        
     }
 }

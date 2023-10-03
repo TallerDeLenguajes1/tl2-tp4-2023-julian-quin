@@ -1,15 +1,16 @@
 using System.Text.Json;
-using EspacioCadeteria;
-namespace EspacioDatosCadeteria
+namespace tl2_tp4_2023_julian_quin;
+public class AccesoADatosCadeteria
 {
-    public class AccesoADatosCadeteria
+    public Cadeteria Obtener()
     {
-        public Cadeteria Obtener()
+        const string path = "Json/DatosCadeteria.json";
+        if (File.Exists(path))
         {
-            const string path = "DatosCadeteria.json";
             string JsonAtexto = File.ReadAllText(path);
-            var datosCadeteria = JsonSerializer.Deserialize<Cadeteria>(JsonAtexto);    
+            var datosCadeteria = JsonSerializer.Deserialize<Cadeteria>(JsonAtexto);
             return datosCadeteria; 
         }
+        return new Cadeteria();  
     }
 }

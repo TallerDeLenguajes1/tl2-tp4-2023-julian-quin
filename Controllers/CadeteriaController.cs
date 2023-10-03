@@ -70,6 +70,17 @@ public class CadeteriaController : ControllerBase
         return NotFound("Error en la solicitud: posible id o Nuevo estado incorrecto para el pedido");
         
     }
+    [HttpPost("Agregar_Cadetes")]
+    public ActionResult<Cadete> AgregarCadete (Cadete nuevoCadete)
+    {
+        if (nuevoCadete!=null)
+        {
+            int id = cadeteria.ListaCadete.Max(cadete => cadete.Id)+1;
+            cadeteria.AgregarCadetes(id,nuevoCadete.Nombre,nuevoCadete.Direccion,nuevoCadete.Telefono);
+            return Ok(nuevoCadete);
+        }else return BadRequest();
+
+    }
     [HttpGet("Informe")] 
     public ActionResult GetInforme()
     {

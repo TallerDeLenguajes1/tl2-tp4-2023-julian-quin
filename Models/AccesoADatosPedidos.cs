@@ -7,19 +7,21 @@ public class AccesoADatosPedidos
     {
         if (File.Exists(path))
         {
-            string JsonEnTexto = File.ReadAllText(path);
-            var Listapedidos = JsonSerializer.Deserialize<List<Pedido>>(JsonEnTexto);
-            return Listapedidos;    
-        }
-        return new List<Pedido>();
-       
+            string jsonEnTexto = File.ReadAllText(path);
+            if (jsonEnTexto!=null && jsonEnTexto.Length > 5)
+            {
+                var Listapedidos = JsonSerializer.Deserialize<List<Pedido>>(jsonEnTexto);
+                return Listapedidos;    
+            }       
+        }    
+        return new List<Pedido>(); 
     }
     public void Guardar(List<Pedido> Pedidos)
     {
         if (Pedidos!=null)
         {
-            string JsonFormat = JsonSerializer.Serialize(Pedidos);
-            File.WriteAllText(path, JsonFormat);    
+            string jsonFormat = JsonSerializer.Serialize(Pedidos);
+            if(jsonFormat != null && jsonFormat.Length > 5) File.WriteAllText(path, jsonFormat);
         }
         
     }

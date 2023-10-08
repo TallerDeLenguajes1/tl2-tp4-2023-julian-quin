@@ -1,7 +1,7 @@
 namespace tl2_tp4_2023_julian_quin;
 public class Cadeteria
 {
-    private static Cadeteria cadeteriaSingleton;
+    private static Cadeteria cadeteria;
     const int Entregado = 500;
     private string nombre;
     private string telefonoCadeteria;
@@ -22,18 +22,18 @@ public class Cadeteria
 
     public static Cadeteria GetCadeteria()
     {
-        if (cadeteriaSingleton == null)
+        if (cadeteria == null)
         {
             var accesoDataCad = new AccesoADatosCadeteria();
-            cadeteriaSingleton = accesoDataCad.Obtener();
-            cadeteriaSingleton.CargarCadetes();
-            cadeteriaSingleton.CargarPedidos();
+            cadeteria = accesoDataCad.Obtener();
+            cadeteria.CargarCadetes(); // llamo a los metodos
+            cadeteria.CargarPedidos();
             //podria acceder a los campos acceso cad y ped y realizar las respectivas instancias (lo hago en el constructor)
             // asi... 
             // cadeteriaSingleton.accesoCadetes = new AccesoADatosCadetes();// creo instancia para el campo
             // cadeteriaSingleton.accesoPedido = new AccesoADatosPedidos();
         }
-        return cadeteriaSingleton;
+        return cadeteria;
 
     }
     private void CargarPedidos()
@@ -42,52 +42,53 @@ public class Cadeteria
     }
     private void CargarCadetes()
     {
-        listaCadete = accesoCadetes.Obtener();
+        listaCadete = accesoCadetes.ObtenerCadetes();
     }
-    public bool CrearPedido(int numeroP, string observacionP, EstadosPedido estadoP, string nombreC, string direccionC, string telC, string refDireccionC)
+    public Pedido CrearPedido(int numeroP, string observacionP, EstadosPedido estadoP, string nombreC, string direccionC, string telC, string refDireccionC)
     {
         var nuevoPedido = new Pedido(numeroP, observacionP, estadoP, nombreC, direccionC, telC, refDireccionC);
         if (nuevoPedido != null)
         {
+            int numeroPedido = 0;
+            if(listaPedidos.Count()!= 0) numeroPedido = listaPedidos.Max(Pedido => Pedido.Numero)+1;
+            nuevoPedido.Numero = numeroPedido;
             listaPedidos.Add(nuevoPedido);
             accesoPedido.Guardar(listaPedidos);
-            return true;
+            return nuevoPedido;
         }
 
-        return false;
+        return nuevoPedido;
     }
 
     public bool AsignarCadeteAPedido(int idCadete, int numeroP)
     {
-        var CadeteEncontrado = EncontrarCadetePorId(idCadete);
+        var ExisteCadete = listaCadete.Any(cadete => cadete.Id == idCadete);
         var PedidoEncontado = EncontrarPedido(numeroP);
-        if (CadeteEncontrado != null && PedidoEncontado != null)
+        if (ExisteCadete == true  && PedidoEncontado != null)
         {
             if (PedidoEncontado.Estado == EstadosPedido.Pendiente)
             {
-                PedidoEncontado.AsignarCadete(CadeteEncontrado);
+                PedidoEncontado.AsignarCadete(idCadete);
                 PedidoEncontado.PedidoAsignado(); // cambio el estado del pedido a "asignado"
                 accesoPedido.Guardar(listaPedidos);
-            }
-            else return false;
+            } else return false;
+
             return true;
         }
         return false;
     }
     public bool ReasignarCadeteApedido(int idCadete, int numeroP)
     {
-        var CadeteEncontrado = EncontrarCadetePorId(idCadete);
+        var ExisteCadete = listaCadete.Any(cadete => cadete.Id == idCadete);
         var PedidoEncontado = EncontrarPedido(numeroP);
-        if (CadeteEncontrado != null && PedidoEncontado != null)
+        if (ExisteCadete == true && PedidoEncontado != null)
         {
             if (PedidoEncontado.Estado != EstadosPedido.Entregado && PedidoEncontado.Estado != EstadosPedido.cancelado)
             {
-                PedidoEncontado.AsignarCadete(CadeteEncontrado);
+                PedidoEncontado.AsignarCadete(idCadete);
                 accesoPedido.Guardar(listaPedidos);
                 return true;
-            }
-            else return false;
-
+            } else return false;
         }
         return false;
     }
@@ -121,7 +122,7 @@ public class Cadeteria
 
         foreach (var pedido in listaPedidos)
         {
-            if ((pedido.Cadete.Id == idCadete) && (pedido.Estado == EstadosPedido.Entregado))
+            if (pedido.IdCadete == idCadete && pedido.Estado == EstadosPedido.Entregado)
             {
                 jornal += Entregado;
             }
@@ -157,10 +158,20 @@ public class Cadeteria
 
     }
 
-    public void AgregarCadetes(int idCadete,string nombreCadete, string direccionCadete, string telCadete)
+    public Cadete AgregarCadetes(Cadete nuevoCadete)
     {
-        var nuevoCadete = new Cadete(idCadete,nombreCadete,direccionCadete,telCadete);
-        listaCadete.Add(nuevoCadete);
+
+        if (nuevoCadete!=null)
+        {
+            int id = 0;
+            if(listaCadete.Count()!= 0) id = listaCadete.Max(cadete => cadete.Id)+1;
+            nuevoCadete.Id = id;
+            listaCadete.Add(nuevoCadete);
+            accesoCadetes.GuardarCadetes(listaCadete);
+            return nuevoCadete; 
+        }
+        return nuevoCadete;
+        
     }
 
 
@@ -177,7 +188,7 @@ public class Cadeteria
         {
             NombreCadete = cadete.Nombre,
             TotalCadete = JornalACobrar(cadete.Id),
-            PedidosEntregados = listaPedidos.Count(pedido => pedido.Cadete.Id == cadete.Id && pedido.Estado == EstadosPedido.Entregado)
+            PedidosEntregados = listaPedidos.Count(pedido => pedido.IdCadete == cadete.Id && pedido.Estado == EstadosPedido.Entregado)
         });
 
        

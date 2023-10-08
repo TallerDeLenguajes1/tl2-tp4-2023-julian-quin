@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable></Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>tl2_tp4_2023_julian_quin</RootNamespace>
   </PropertyGroup>
